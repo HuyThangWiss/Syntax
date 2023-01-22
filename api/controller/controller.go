@@ -25,7 +25,7 @@ func (u *HumansController)CreateHumans(c *gin.Context)  {
 		c.JSON(http.StatusBadRequest,err)
 		return
 	}
-	err := u.Humans.InsertIntoHumans(c,&createHumans)
+	_,err := u.Humans.InsertIntoHumans(c,&createHumans)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "loi")
 		return
@@ -80,7 +80,46 @@ func (u *HumansController)DeleteById(c *gin.Context)  {
 	}
 	c.JSON(http.StatusOK,gin.H{"Delete":"successfully"})
 }
-
+func (u *HumansController)FindByForm(c *gin.Context)  {
+	var req request.Req
+	err:= c.ShouldBindQuery(&req)
+	if err != nil{
+		c.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+	post,err := u.Humans.FindForm(c,req)
+	if err != nil{
+		c.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success", "data": post})
+}
+func (u *HumansController)Login(c *gin.Context)  {
+	var Req entities.Humans
+	if err := c.ShouldBindJSON(&Req);err != nil{
+		c.JSON(http.StatusInternalServerError, "lỗi rồi nhé 1")
+		return
+	}
+	token,err := u.Humans.Login(c,Req)
+	if err != nil{
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"Token ":token})
+}
+func (u *HumansController)RegisterUser(c *gin.Context)  {
+	var user *entities.Humans
+	if err := c.ShouldBindJSON(&user);err != nil{
+		c.JSON(http.StatusInternalServerError, "lỗi rồi nhé")
+		return
+	}
+	_,err := u.Humans.RegisterUser(c,user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "loi")
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
 
 
 
