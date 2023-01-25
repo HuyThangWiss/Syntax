@@ -1,5 +1,8 @@
 var controller = require('../../MonGoDb/api/controller/controller')
 
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
 
 // console.log("Find")
 // controller.showSearchByName('Book1').then((result) => {
@@ -45,7 +48,7 @@ controller.updateBookPresentation("The Great Gatsby 002",{
 //const user =  controller.addUserPresentation("john", "mysecretpassword");
 
 
-
+/*
 const handleLogin = async (email, password) => {
     try {
       const user = await controller.handleLogin(email, password);
@@ -53,16 +56,42 @@ const handleLogin = async (email, password) => {
     } catch (err) {
       // handle login error
     }
+  };
+  
+*/
+
+//const token =  controller.handleLoginToken("john", "mysecretpassword");
+
+/*
+const token = controller.handleLoginToken("john", "mysecretpassword")
+  .then((token) => console.log(token))
+  .catch((err) => console.log(err));
+
+*/
+app.use(bodyParser.json());
+
+app.post('/login', async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  try {
+    const token = await controller.handleLoginToken(username, password);
+    res.json({ token });
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid email or password' });
   }
-  handleLogin("john", "mysecretpassword");
+});
+
+app.get('/all-data', controller.verifyToken, async (req, res) => {
+  try {
+    const data = await controller.findAllPresentation();
+    res.status(200).json({ data });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching data' });
+  }
+});
 
 
-
-
-
-
-
-
+app.listen(8080, () => console.log('Server is running on port 8080'));
 
 
 

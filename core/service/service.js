@@ -42,7 +42,7 @@ const addUserBLL = async (username, password) => {
     const result = await findByName.addUser({username: username, password: encryptedPassword});
     return result;
 }
-
+//password
 const login = async (email, password) => {
     const user = await findByName.getUserByEmail(email);
     if(user){
