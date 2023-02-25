@@ -21,4 +21,5 @@ func Router() *gin.Engine {
 
 	// Delete Student
 	r.DELETE("/students/:msv", handlers.DeleteStudent)
+	return r
 }
